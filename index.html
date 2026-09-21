@@ -363,8 +363,10 @@
       subtitleEl.textContent = stage.subtitle;
       subtitleEl.classList.add('text-crimson');
 
-      let yesScale = 1.0 + (escapeCount * 0.1); // Scale slightly slower so it doesn't get too massive
+      // VIRAL EFFECT: Yes button grows MASSIVELY each time
+      let yesScale = 1.0 + (escapeCount * 0.5); 
       yesBtn.style.transform = `scale(${yesScale})`;
+      yesBtn.style.zIndex = '50';
       yesBtn.style.boxShadow = `0 ${15 + (escapeCount * 3)}px ${30 + (escapeCount * 5)}px rgba(130, 24, 26, ${Math.min(0.6, 0.3 + (escapeCount * 0.05))})`;
 
       if (escapeCount >= MAX_ESCAPES) {
@@ -391,8 +393,8 @@
       const randomX = Math.floor(Math.random() * maxX) + padding;
       const randomY = Math.floor(Math.random() * maxY) + padding;
 
-      // Don't shrink below 40% size, regardless of how high 'n' is
-      let noScale = Math.max(0.4, 1 - (escapeCount * (0.6 / MAX_ESCAPES)));
+      // Keep the No button a reasonable size while it dodges
+      let noScale = Math.max(0.7, 1 - (escapeCount * 0.05));
 
       noBtn.style.left = `${randomX}px`;
       noBtn.style.top = `${randomY}px`;
