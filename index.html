@@ -11,7 +11,7 @@
   <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   
-  <!-- Google Fonts: Gochi Hand for the cute handwriting, Outfit for clean text -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
 
   <style>
     body {
-      background-color: #FDF1F3; /* Very soft pink background */
+      background-color: #FDF1F3; 
       margin: 0;
       min-height: 100vh;
       display: flex;
@@ -60,34 +60,30 @@
       touch-action: manipulation;
     }
 
-    /* 
-      This is a placeholder for the beautiful watercolor balloons. 
-      You can replace the background-image URL with your actual asset!
-    */
+    /* Central Watercolor Balloons */
     .bg-illustration {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 100%;
-      max-width: 600px;
-      height: 80vh;
-      background-image: url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=800');
+      max-width: 650px;
+      height: 90vh;
+      background-image: url('assets/balloons.png');
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
-      opacity: 0.6; /* Softened so the card pops */
+      mix-blend-mode: multiply; /* Blends the white background of the watercolor into the pink page */
       z-index: 0;
-      mix-blend-mode: multiply;
     }
 
-    /* The frosted glass effect from your reference */
+    /* The frosted glass effect */
     .glass-card {
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 30px 60px rgba(182, 31, 31, 0.08);
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 30px 60px rgba(182, 31, 31, 0.1);
       border-radius: 2rem;
     }
 
@@ -117,14 +113,18 @@
 
 <body class="selection:bg-textRed selection:text-white font-sans antialiased text-gray-800 relative">
 
-  <!-- Background Illustration -->
+  <!-- Background Balloons -->
   <div class="bg-illustration animate-float"></div>
 
   <!-- Main Card Container -->
-  <main class="relative z-10 w-[90%] max-w-md aspect-square max-h-[500px] glass-card flex flex-col items-center justify-center p-8 sm:p-10 animate-fade-in text-center">
+  <main class="relative z-10 w-[90%] max-w-[420px] aspect-square max-h-[500px] glass-card flex flex-col items-center justify-center p-8 sm:p-10 animate-fade-in text-center">
     
+    <!-- Decorative Ribbons (Absolute positioned relative to the card) -->
+    <img src="assets/ribbon-left.png" alt="" class="absolute -left-10 top-[60%] -translate-y-1/2 w-[120px] h-auto pointer-events-none drop-shadow-md z-30" style="mix-blend-mode: multiply;">
+    <img src="assets/ribbon-right.png" alt="" class="absolute -right-6 -top-6 w-[100px] h-auto pointer-events-none drop-shadow-md z-30" style="mix-blend-mode: multiply;">
+
     <!-- PROPOSAL CONTENT -->
-    <div id="proposal-box" class="w-full flex flex-col items-center justify-center h-full transition-opacity duration-500">
+    <div id="proposal-box" class="w-full flex flex-col items-center justify-center h-full transition-opacity duration-500 z-40">
       
       <p class="font-hand text-2xl sm:text-3xl text-textRed mb-1 tracking-wide">
         Hey!!
@@ -159,8 +159,8 @@
       
     </div>
 
-    <!-- SUCCESS CONTENT (Hidden by default) -->
-    <div id="success-box" class="hidden absolute inset-0 w-full h-full flex flex-col items-center justify-center p-8 text-center transition-opacity duration-500 opacity-0">
+    <!-- SUCCESS CONTENT -->
+    <div id="success-box" class="hidden absolute inset-0 w-full h-full flex flex-col items-center justify-center p-8 text-center transition-opacity duration-500 opacity-0 z-40">
       <div class="text-5xl mb-4 animate-bounce">❤️</div>
       
       <h2 class="font-hand text-4xl sm:text-5xl text-textRed mb-4 leading-tight">
@@ -186,7 +186,6 @@
     const MAX_ESCAPES = 8;
     let isSuccess = false;
 
-    // We change the text for the NO button, and the YES button physically grows
     const escapeStages = [
       { noText: "Are you sure? 🥺", subtitle: "Think carefully..." },
       { noText: "Really sure? 🧐", subtitle: "Mistakes happen!" },
@@ -201,7 +200,6 @@
     const proposalBox = document.getElementById('proposal-box');
     const successBox = document.getElementById('success-box');
 
-    // Simple pop sound
     function playPop() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -232,8 +230,6 @@
       subtitleEl.textContent = stage.subtitle;
       subtitleEl.classList.add('text-textRed');
 
-      // VIRAL EFFECT: Yes button physically inflates!
-      // This increases font size and padding, pushing the No button away
       const baseFontSize = 16;
       const basePaddingY = 12;
       const basePaddingX = 32;
@@ -243,14 +239,12 @@
       yesBtn.style.fontSize = `${baseFontSize * multiplier}px`;
       yesBtn.style.padding = `${basePaddingY * multiplier}px ${basePaddingX * multiplier}px`;
       
-      // Keep No button text updating
       noBtn.innerText = stage.noText;
       
-      // If they click No too many times, we just hide it!
       if (escapeCount >= MAX_ESCAPES) {
         noBtn.style.opacity = '0';
         noBtn.style.pointerEvents = 'none';
-        noBtn.style.position = 'absolute'; // Remove from flex flow to let Yes take over completely
+        noBtn.style.position = 'absolute'; 
       }
     }
 
@@ -278,7 +272,6 @@
       setTimeout(() => {
         proposalBox.classList.add('hidden');
         successBox.classList.remove('hidden');
-        // Trigger reflow
         void successBox.offsetWidth;
         successBox.style.opacity = '1';
       }, 500);
