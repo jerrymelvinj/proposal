@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Da! Will you be my wife? 💍</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            parchment: '#FAF6F0',
+            parchmentDeep: '#EAE0D5',
+            crimson: '#82181A',
+            crimsonDark: '#5E1012',
+            crimsonSoft: '#9E2A2B',
+            blush: '#FCEFEF',
+            blushDark: '#F5D7D7',
+            goldMuted: '#CBB279',
+            warmCharcoal: '#2D2828'
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'serif'],
+            script: ['"Alex Brush"', 'cursive'],
+            hand: ['"Caveat"', 'cursive'],
+            sans: ['"Outfit"', 'sans-serif']
+          },
+          animation: {
+            'fade-in': 'fadeIn 1s ease-out forwards',
+            'float-slow': 'float 6s ease-in-out infinite',
+            'float-delayed': 'float 6s ease-in-out 3s infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-20px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #FAF6F0;
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+
+    /* Floating background hearts (mobile/general) */
+    .bg-floating-heart {
+      position: absolute;
+      pointer-events: none;
+      color: rgba(130, 24, 26, 0.08);
+      animation: floatUpwards linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes floatUpwards {
+      0% { transform: translateY(100vh) scale(0.6) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.8; }
+      80% { opacity: 0.5; }
+      100% { transform: translateY(-10vh) scale(1.2) rotate(45deg); opacity: 0; }
+    }
+
+    @keyframes subtlePulse {
+      0%, 100% { transform: scale(1); }
+      14% { transform: scale(1.15); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.15); }
+      70% { transform: scale(1); }
+    }
+    .heart-pulse {
+      animation: subtlePulse 2s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    #btn-no {
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      will-change: transform, left, top;
+    }
+
+    #btn-yes {
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      will-change: transform;
+    }
+
+    .shimmer-effect {
+      background: linear-gradient(110deg, #82181A 0%, #a82427 45%, #e64a4d 50%, #a82427 55%, #82181A 100%);
+      background-size: 250% 100%;
+      animation: shimmer 3.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    .editorial-border {
+      box-shadow: 0 25px 50px -12px rgba(130, 24, 26, 0.15), 0 0 0 1px rgba(130, 24, 26, 0.05);
+    }
+    
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+
+<body class="selection:bg-crimson selection:text-parchment font-sans antialiased text-warmCharcoal">
+
+  <div id="hearts-container" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+  <!-- Split Layout Container -->
+  <main class="min-h-screen flex flex-col lg:flex-row relative z-10 opacity-0 animate-fade-in">
+    
+    <!-- Left Pane: The Proposal Content -->
+    <section class="w-full lg:w-1/2 min-h-screen flex items-center justify-center p-6 sm:p-12 lg:p-20 relative">
+      
+      <!-- Container holding the dynamic cards -->
+      <div class="w-full max-w-lg relative">
+        
+        <!-- PROPOSAL CARD -->
+        <div id="proposal-box" class="w-full glass-effect rounded-[2rem] p-8 sm:p-12 editorial-border text-center relative border border-white/80 transition-all duration-700 transform origin-center">
+          
+          <!-- Decorative Accent -->
+          <div class="mb-6 flex items-center justify-center space-x-3">
+            <span class="h-[1px] w-12 bg-crimson/20"></span>
+            <div class="text-crimson text-2xl heart-pulse select-none">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 drop-shadow-sm">
+                <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 8.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+              </svg>
+            </div>
+            <span class="h-[1px] w-12 bg-crimson/20"></span>
+          </div>
+
+          <!-- Pre-header -->
+          <p class="font-script text-3xl sm:text-4xl text-crimson/80 mb-2 transform -rotate-2 select-none">
+            From this day forth...
+          </p>
+
+          <!-- Main Heading -->
+          <h1 class="font-serif text-5xl sm:text-7xl font-bold tracking-tight text-crimson leading-[1.1] mb-6">
+            Da! Will you be <br><span class="italic font-normal text-crimsonSoft">my wife?</span>
+          </h1>
+
+          <!-- Subtitle -->
+          <p id="prompt-subtitle" class="text-warmCharcoal/60 text-sm sm:text-base font-light tracking-wide max-w-sm mx-auto mb-10 transition-colors duration-300">
+            Saying no is strictly not an option... 💕
+          </p>
+
+          <!-- Escape Badge -->
+          <div id="escape-badge" class="hidden inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full bg-crimson/10 text-crimson text-xs sm:text-sm font-medium tracking-wide animate-bounce border border-crimson/10">
+            <span>🏃💨</span>
+            <span id="escape-counter-text">Nice try! Button escapes: 0</span>
+          </div>
+
+          <!-- Buttons -->
+          <div id="button-stage" class="relative min-h-[100px] flex items-center justify-center gap-4 sm:gap-6">
+            
+            <button 
+              id="btn-yes" 
+              onclick="handleYesClick()"
+              class="shimmer-effect relative z-20 px-10 py-4 rounded-full text-white font-sans text-lg font-medium tracking-wide shadow-xl shadow-crimson/30 hover:shadow-2xl hover:shadow-crimson/50 focus:outline-none cursor-pointer flex items-center gap-2 group transition-all"
+            >
+              <span>Yes, Forever! 💍</span>
+              <span class="inline-block transition-transform duration-300 group-hover:scale-125">✨</span>
+            </button>
+
+            <button 
+              id="btn-no" 
+              class="relative z-20 px-8 py-4 rounded-full bg-parchment hover:bg-parchmentDeep text-crimson/80 border border-crimson/15 font-sans text-lg font-medium shadow-sm hover:shadow focus:outline-none select-none whitespace-nowrap cursor-pointer transition-colors"
+            >
+              No 🙈
+            </button>
+          </div>
+        </div>
+
+        <!-- SUCCESS CARD -->
+        <div id="success-box" class="hidden absolute inset-0 w-full glass-effect rounded-[2rem] p-8 sm:p-12 editorial-border text-center flex flex-col justify-center border border-white/80 transform scale-95 opacity-0 transition-all duration-700">
+          <div class="text-6xl mb-6 animate-bounce">💍</div>
+          
+          <p class="font-script text-4xl text-crimson/80 mb-2 transform -rotate-2">
+            She said...
+          </p>
+          
+          <h2 class="font-serif text-5xl sm:text-6xl font-bold text-crimson mb-6 tracking-tight leading-tight">
+            YES! <br>FOREVER! ❤️
+          </h2>
+          
+          <p class="text-warmCharcoal/70 text-lg font-serif italic max-w-sm mx-auto mb-8 leading-relaxed">
+            "I knew you couldn’t resist! From this moment onwards, our forever fairytale officially begins."
+          </p>
+          
+          <div class="h-[1px] w-16 bg-crimson/20 mx-auto mb-8"></div>
+
+          <div class="flex flex-col gap-3 w-full max-w-xs mx-auto">
+            <button 
+              onclick="shareLoveMessage()" 
+              class="w-full px-6 py-3.5 rounded-full bg-crimson text-white font-sans text-sm font-medium tracking-wide shadow-lg shadow-crimson/20 hover:bg-crimsonDark hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+            >
+              <span>Send My Answer 💌</span>
+            </button>
+            <button 
+              onclick="copySweetNote(this)" 
+              class="w-full px-6 py-3.5 rounded-full bg-transparent text-crimson border border-crimson/20 text-sm font-medium hover:bg-crimson/5 transition-colors"
+            >
+              Copy Cute Note 📋
+            </button>
+          </div>
+
+          <button 
+            onclick="fireGrandConfetti()" 
+            class="mt-8 text-xs text-crimson/50 hover:text-crimson font-sans tracking-widest uppercase hover:underline transition-colors"
+          >
+            🎆 More Fireworks
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Right Pane: Illustration / Visuals (Hidden on small screens) -->
+    <section class="hidden lg:flex w-1/2 bg-blush relative overflow-hidden items-center justify-center border-l border-white/50">
+      
+      <!-- Abstract Romantic Graphic -->
+      <div class="relative w-full h-full flex items-center justify-center">
+        <!-- Soft decorative background gradients -->
+        <div class="absolute inset-0 bg-gradient-to-br from-blush via-white to-blushDark opacity-60"></div>
+        
+        <!-- Animated Abstract Vector Illustration inspired by modern UI -->
+        <svg class="relative z-10 w-3/4 max-w-2xl h-auto drop-shadow-2xl opacity-90" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Large curved backdrop shape -->
+          <path d="M150 400C150 250 270 150 420 150C570 150 700 280 650 450C600 620 450 700 300 650C150 600 150 550 150 400Z" fill="#FCEFEF" class="animate-float-slow"/>
+          
+          <!-- Elegant Line Art Heart Interlocking -->
+          <path d="M350 350C350 300 300 280 250 320C200 360 250 450 400 550C550 450 600 360 550 320C500 280 450 300 450 350" stroke="#82181A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="animate-float-delayed"/>
+          <path d="M450 450C450 400 400 380 350 420C300 460 350 550 500 650C650 550 700 460 650 420C600 380 550 400 550 450" stroke="#CBB279" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="10 10" class="animate-float-slow"/>
+          
+          <!-- Decorative sparkles/stars -->
+          <path d="M250 200 L260 240 L300 250 L260 260 L250 300 L240 260 L200 250 L240 240 Z" fill="#CBB279" class="animate-pulse"/>
+          <path d="M600 250 L605 270 L625 275 L605 280 L600 300 L595 280 L575 275 L595 270 Z" fill="#82181A" class="animate-pulse" style="animation-delay: 1s;"/>
+          
+          <!-- Geometric accent dots -->
+          <circle cx="500" cy="200" r="8" fill="#9E2A2B" opacity="0.5"/>
+          <circle cx="200" cy="500" r="12" fill="#CBB279" opacity="0.4"/>
+          <circle cx="650" cy="550" r="6" fill="#82181A" opacity="0.6"/>
+        </svg>
+
+      </div>
+      
+      <div class="absolute bottom-6 right-8 text-xs uppercase tracking-[0.25em] text-crimson/40 font-sans font-semibold select-none">
+        Designed with eternal love
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let escapeCount = 0;
+    
+    // Set this to ANY number you want! (This is your 'n' number of times)
+    const MAX_ESCAPES = 10; 
+    
+    let isSuccess = false;
+
+    const escapeStages = [
+      { noText: "Are you sure? 🥺", subtitle: "Wait... think carefully before clicking that! 💭", badge: "Thinking twice?" },
+      { noText: "Think again! 🧐", subtitle: "Mistakes happen! Look at that shiny YES button ✨", badge: "Wavering..." },
+      { noText: "Breaking my heart 💔", subtitle: "Ouch! Cupid just shed a tear. Please reconsider! 🥹", badge: "Heartbreak imminent..." },
+      { noText: "Look at YES! 😍", subtitle: "It's practically begging you to say YES right now! 💍", badge: "Almost trapped!" },
+      { noText: "Last chance... 🙈", subtitle: "Destiny has made up its mind: Only YES remains! ❤️", badge: "Giving up!" }
+    ];
+
+    const noBtn = document.getElementById('btn-no');
+    const yesBtn = document.getElementById('btn-yes');
+    const badge = document.getElementById('escape-badge');
+    const badgeText = document.getElementById('escape-counter-text');
+    const subtitleEl = document.getElementById('prompt-subtitle');
+    const proposalBox = document.getElementById('proposal-box');
+    const successBox = document.getElementById('success-box');
+
+    // Audio setup
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playDodgeSound() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const now = audioCtx.currentTime;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320 + Math.random() * 100, now);
+        osc.frequency.exponentialRampToValueAtTime(750, now + 0.12);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.13);
+      } catch (err) {}
+    }
+
+    function playCelebrationChime() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const chordNotes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        chordNotes.forEach((freq, index) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const noteTime = audioCtx.currentTime + (index * 0.08);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, noteTime);
+          gain.gain.setValueAtTime(0.2, noteTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 1.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(noteTime);
+          osc.stop(noteTime + 1.3);
+        });
+      } catch (e) {}
+    }
+
+    function teleportNoButton() {
+      if (isSuccess || escapeCount >= MAX_ESCAPES) return;
+
+      escapeCount++;
+      playDodgeSound();
+
+      // Ensure we don't go out of bounds if MAX_ESCAPES is larger than our message array
+      const stageIndex = Math.min(escapeCount - 1, escapeStages.length - 1);
+      const stage = escapeStages[stageIndex];
+      
+      badge.classList.remove('hidden');
+      badgeText.textContent = `Escape ${escapeCount} of ${MAX_ESCAPES}: ${stage.badge}`;
+      subtitleEl.textContent = stage.subtitle;
+      subtitleEl.classList.add('text-crimson');
+
+      let yesScale = 1.0 + (escapeCount * 0.1); // Scale slightly slower so it doesn't get too massive
+      yesBtn.style.transform = `scale(${yesScale})`;
+      yesBtn.style.boxShadow = `0 ${15 + (escapeCount * 3)}px ${30 + (escapeCount * 5)}px rgba(130, 24, 26, ${Math.min(0.6, 0.3 + (escapeCount * 0.05))})`;
+
+      if (escapeCount >= MAX_ESCAPES) {
+        noBtn.style.transition = 'all 0.4s ease-out';
+        noBtn.style.transform = 'scale(0)';
+        noBtn.style.opacity = '0';
+        noBtn.style.pointerEvents = 'none';
+        setTimeout(() => noBtn.style.display = 'none', 400);
+        yesBtn.classList.add('animate-pulse');
+        return;
+      }
+
+      if (noBtn.style.position !== 'fixed') noBtn.style.position = 'fixed';
+
+      const padding = 20;
+      const btnRect = noBtn.getBoundingClientRect();
+      const isDesktop = window.innerWidth >= 1024;
+      const viewportWidth = isDesktop ? window.innerWidth / 2 : window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      const maxX = Math.max(padding, viewportWidth - btnRect.width - padding);
+      const maxY = Math.max(padding, viewportHeight - btnRect.height - padding);
+
+      const randomX = Math.floor(Math.random() * maxX) + padding;
+      const randomY = Math.floor(Math.random() * maxY) + padding;
+
+      // Don't shrink below 40% size, regardless of how high 'n' is
+      let noScale = Math.max(0.4, 1 - (escapeCount * (0.6 / MAX_ESCAPES)));
+
+      noBtn.style.left = `${randomX}px`;
+      noBtn.style.top = `${randomY}px`;
+      noBtn.style.transform = `scale(${noScale})`;
+      noBtn.innerText = stage.noText;
+    }
+
+    noBtn.addEventListener('mouseenter', teleportNoButton);
+    noBtn.addEventListener('mousedown', (e) => { e.preventDefault(); teleportNoButton(); });
+    noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); teleportNoButton(); }, { passive: false });
+
+    document.addEventListener('touchstart', (e) => {
+      if (isSuccess || escapeCount >= maxEscapes || noBtn.style.display === 'none') return;
+      const touch = e.touches[0];
+      const rect = noBtn.getBoundingClientRect();
+      const distance = Math.hypot(touch.clientX - (rect.left + rect.width / 2), touch.clientY - (rect.top + rect.height / 2));
+      if (distance < 80) teleportNoButton();
+    }, { passive: true });
+
+    function fireGrandConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 150, spread: 100, origin: { y: 0.6, x: 0.2 }, colors: ['#82181A', '#CBB279', '#FCEFEF', '#E63946'] });
+        confetti({ particleCount: 150, spread: 100, origin: { y: 0.6, x: 0.8 }, colors: ['#82181A', '#CBB279', '#FCEFEF', '#E63946'] });
+        setTimeout(() => {
+          confetti({ particleCount: 100, angle: 90, spread: 120, origin: { y: 0.8 }, shapes: ['circle'], colors: ['#82181A', '#a82427', '#ffd166'] });
+        }, 250);
+      }
+    }
+
+    function handleYesClick() {
+      if (isSuccess) return;
+      isSuccess = true;
+      playCelebrationChime();
+      fireGrandConfetti();
+      noBtn.style.display = 'none';
+      
+      // Crossfade logic for cards
+      proposalBox.classList.add('opacity-0', 'scale-95');
+      setTimeout(() => {
+        proposalBox.style.visibility = 'hidden';
+        successBox.classList.remove('hidden');
+        
+        // Trigger reflow
+        void successBox.offsetWidth;
+        
+        successBox.classList.remove('scale-95', 'opacity-0');
+        successBox.classList.add('scale-100', 'opacity-100');
+        startOngoingConfettiStream();
+      }, 500);
+    }
+
+    function startOngoingConfettiStream() {
+      const end = Date.now() + 5000;
+      const interval = setInterval(() => {
+        if (Date.now() > end) return clearInterval(interval);
+        if (typeof confetti === 'function') {
+          confetti({ startVelocity: 30, spread: 360, ticks: 60, origin: { x: Math.random(), y: Math.random() * 0.3 }, colors: ['#82181A', '#CBB279', '#FCEFEF'] });
+        }
+      }, 400);
+    }
+
+    function shareLoveMessage() {
+      const text = encodeURIComponent("Da, I said YES! 💍 Forever begins now! ❤️✨");
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function copySweetNote(btn) {
+      navigator.clipboard.writeText("Da, I said YES! 💍 Forever begins now! ❤️✨").then(() => {
+        const og = btn.innerText;
+        btn.innerText = "Copied! 💕";
+        setTimeout(() => btn.innerText = og, 2000);
+      });
+    }
+
+    function spawnBackgroundHearts() {
+      const container = document.getElementById('hearts-container');
+      const heartSVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+      const count = window.innerWidth < 1024 ? 15 : 25;
+
+      for (let i = 0; i < count; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'bg-floating-heart';
+        heart.innerHTML = heartSVG;
+        
+        const size = Math.floor(Math.random() * 20) + 12;
+        const left = Math.random() * 100;
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 10;
+
+        heart.style.width = `${size}px`;
+        heart.style.height = `${size}px`;
+        heart.style.left = `${left}%`;
+        heart.style.animationDuration = `${duration}s`;
+        heart.style.animationDelay = `-${delay}s`;
+
+        container.appendChild(heart);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', spawnBackgroundHearts);
+  </script>
+</body>
+</html>
