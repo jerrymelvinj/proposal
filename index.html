@@ -363,10 +363,16 @@
       subtitleEl.textContent = stage.subtitle;
       subtitleEl.classList.add('text-crimson');
 
-      // VIRAL EFFECT: Yes button grows MASSIVELY each time
-      let yesScale = 1.0 + (escapeCount * 0.5); 
-      yesBtn.style.transform = `scale(${yesScale})`;
-      yesBtn.style.zIndex = '50';
+      // VIRAL EFFECT: Yes button physically grows to push the No button away
+      // We calculate new sizes based on the escape count
+      const baseFontSize = 18; // base text-lg is 18px
+      const basePaddingY = 16; // py-4
+      const basePaddingX = 40; // px-10
+      
+      const multiplier = 1 + (escapeCount * 0.4);
+      
+      yesBtn.style.fontSize = `${baseFontSize * multiplier}px`;
+      yesBtn.style.padding = `${basePaddingY * multiplier}px ${basePaddingX * multiplier}px`;
       yesBtn.style.boxShadow = `0 ${15 + (escapeCount * 3)}px ${30 + (escapeCount * 5)}px rgba(130, 24, 26, ${Math.min(0.6, 0.3 + (escapeCount * 0.05))})`;
 
       if (escapeCount >= MAX_ESCAPES) {
@@ -379,26 +385,7 @@
         return;
       }
 
-      if (noBtn.style.position !== 'fixed') noBtn.style.position = 'fixed';
-
-      const padding = 20;
-      const btnRect = noBtn.getBoundingClientRect();
-      const isDesktop = window.innerWidth >= 1024;
-      const viewportWidth = isDesktop ? window.innerWidth / 2 : window.innerWidth;
-      const viewportHeight = window.innerHeight;
-
-      const maxX = Math.max(padding, viewportWidth - btnRect.width - padding);
-      const maxY = Math.max(padding, viewportHeight - btnRect.height - padding);
-
-      const randomX = Math.floor(Math.random() * maxX) + padding;
-      const randomY = Math.floor(Math.random() * maxY) + padding;
-
-      // Keep the No button a reasonable size while it dodges
-      let noScale = Math.max(0.7, 1 - (escapeCount * 0.05));
-
-      noBtn.style.left = `${randomX}px`;
-      noBtn.style.top = `${randomY}px`;
-      noBtn.style.transform = `scale(${noScale})`;
+      // No button simply changes text and stays right where it is!
       noBtn.innerText = stage.noText;
     }
 
